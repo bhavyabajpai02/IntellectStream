@@ -66,7 +66,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Next-Gen Web Agents: Integrating LLMs Directly into Modern React Frameworks',
     summary: 'Explores real-time streaming state management and client-side agentic execution models for complex web applications.',
     source: 'Tech AI Dispatch',
-    url: 'https://news.ycombinator.com',
+    url: 'https://react.dev/blog',
     publishedAt: '2 hours ago',
     topics: ['AI', 'Web Development'],
     readTime: '4 min read'
@@ -76,7 +76,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Computer Vision in Clinical Diagnostics: Real-Time Edge Processing on Embedded Hardware',
     summary: 'How lightweight visual transformers enable zero-latency surgical assistance and automated anomaly detection in medical imaging.',
     source: 'Medical AI Quarterly',
-    url: 'https://news.ycombinator.com',
+    url: 'https://arxiv.org/abs/2303.08774',
     publishedAt: '5 hours ago',
     topics: ['Computer Vision', 'Healthcare', 'Edge Computing'],
     readTime: '6 min read'
@@ -86,7 +86,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Autonomous Cloud Architecture: Self-Healing Multi-Cloud Infrastructure with AI Models',
     summary: 'Automating multi-cloud autoscaling, latency balancing, and security policy enforcement using continuous reinforcement learning.',
     source: 'Cloud Native Insider',
-    url: 'https://news.ycombinator.com',
+    url: 'https://kubernetes.io/blog/',
     publishedAt: '1 day ago',
     topics: ['AI', 'Cloud', 'DevOps'],
     readTime: '5 min read'
@@ -96,7 +96,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'AI-Powered Static Code Analysis for Modern Web Frontend Applications',
     summary: 'Leveraging domain-specific transformer models to detect performance bottlenecks, accessibility flaws, and memory leaks before deployment.',
     source: 'Frontend Weekly',
-    url: 'https://news.ycombinator.com',
+    url: 'https://github.com/features/copilot',
     publishedAt: '1 day ago',
     topics: ['AI', 'Web Development', 'DevOps'],
     readTime: '5 min read'
@@ -106,7 +106,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Zero-Trust AI Security Enclaves for Enterprise Cloud Platforms',
     summary: 'Implementing confidential computing primitives and encrypted model weights to prevent data exfiltration in public cloud deployments.',
     source: 'CyberSec Digest',
-    url: 'https://news.ycombinator.com',
+    url: 'https://aws.amazon.com/security/',
     publishedAt: '2 days ago',
     topics: ['AI', 'Security', 'Cloud'],
     readTime: '7 min read'
@@ -116,7 +116,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Edge AI in Industrial Robotics: High-Frequency Control Loops with Neural Motion Planners',
     summary: 'Combining micro-second neural execution on embedded microcontrollers to enable dynamic obstacle avoidance in automated factories.',
     source: 'Robotics Engineering Today',
-    url: 'https://news.ycombinator.com',
+    url: 'https://www.ieee.org/topics/robotics.html',
     publishedAt: '2 days ago',
     topics: ['Robotics', 'Edge Computing', 'AI'],
     readTime: '8 min read'
@@ -126,7 +126,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Real-Time Telehealth Video Analytics via On-Device Computer Vision Models',
     summary: 'How localized spatial vision models assess patient vital indicators and facial distress signals securely during virtual consultations.',
     source: 'Digital Health Review',
-    url: 'https://news.ycombinator.com',
+    url: 'https://health.google/',
     publishedAt: '3 days ago',
     topics: ['Computer Vision', 'Healthcare', 'Mobile'],
     readTime: '4 min read'
@@ -136,7 +136,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'On-Device LLM Inference in React Native Mobile Applications',
     summary: 'A deep dive into WebAssembly and NAPI bindings for executing quantized 3B parameter models offline on iOS and Android devices.',
     source: 'Mobile Dev Hub',
-    url: 'https://news.ycombinator.com',
+    url: 'https://reactnative.dev/blog',
     publishedAt: '3 days ago',
     topics: ['AI', 'Mobile', 'Web Development'],
     readTime: '6 min read'
@@ -146,7 +146,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Serverless Edge Microservices for Low-Latency Cloud AI APIs',
     summary: 'Structuring ultra-responsive API gateways using v8 isolates, streaming response headers, and global edge cache invalidation.',
     source: 'Cloud Architecture Monthly',
-    url: 'https://news.ycombinator.com',
+    url: 'https://cloudflare.com/developer-platform/',
     publishedAt: '4 days ago',
     topics: ['Cloud', 'DevOps', 'Web Development'],
     readTime: '5 min read'
@@ -156,7 +156,7 @@ export const FEATURED_ARTICLES_PREVIEW: NewsArticle[] = [
     title: 'Automated Vulnerability Remediation in Cloud Workloads via Generative AI',
     summary: 'Using automated patch generation pipelines to audit container registries and deploy verified hotfixes in CI/CD environments.',
     source: 'DevSecOps Insights',
-    url: 'https://news.ycombinator.com',
+    url: 'https://cve.mitre.org/',
     publishedAt: '5 days ago',
     topics: ['AI', 'Security', 'DevOps'],
     readTime: '6 min read'

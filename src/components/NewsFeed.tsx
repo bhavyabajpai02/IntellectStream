@@ -46,6 +46,21 @@ export const NewsFeed: React.FC = () => {
         setArticles(data.articles);
         setIsLiveApi(data.isLiveApi ?? false);
         setFeedSource(data.source ?? (data.isLiveApi ? 'Live GNews Feed' : 'Mock Fallback Dataset'));
+        
+        // Dev mode inspection
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[IntellectStream Feed Debug]', {
+            isLiveApi: data.isLiveApi,
+            source: data.source,
+            articleCount: data.articles.length,
+            articles: data.articles.map((a: NewsArticle) => ({
+              title: a.title,
+              source: a.source,
+              url: a.url
+            }))
+          });
+        }
+
         if (data.error) {
           setError(data.error);
         }
