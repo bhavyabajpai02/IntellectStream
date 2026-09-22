@@ -45,7 +45,7 @@ export const NewsFeed: React.FC = () => {
       if (data.articles && Array.isArray(data.articles) && data.articles.length > 0) {
         setArticles(data.articles);
         setIsLiveApi(data.isLiveApi ?? false);
-        setFeedSource(data.source ?? (data.isLiveApi ? 'Live NewsAPI Feed' : 'Mock Fallback Dataset'));
+        setFeedSource(data.source ?? (data.isLiveApi ? 'Live GNews Feed' : 'Mock Fallback Dataset'));
         if (data.error) {
           setError(data.error);
         }

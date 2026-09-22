@@ -3,10 +3,10 @@ import { FEATURED_ARTICLES_PREVIEW, ALL_AVAILABLE_TOPICS } from './constants';
 
 /**
  * Deterministic Topic Classifier
- * Maps article text (title, description, content, tags) against standard IntellectStream topics.
+ * Maps article text (title, description, content) against standard IntellectStream topics.
  */
-export function classifyTopics(title: string, description: string = '', content: string = '', rawTags: string[] = []): string[] {
-  const combinedText = `${title} ${description} ${content} ${rawTags.join(' ')}`.toLowerCase();
+export function classifyTopics(title: string, description: string = '', content: string = ''): string[] {
+  const combinedText = `${title} ${description} ${content}`.toLowerCase();
   const matchedTopics: string[] = [];
 
   const topicKeywords: Record<string, RegExp[]> = {
@@ -52,7 +52,7 @@ export function classifyTopics(title: string, description: string = '', content:
 
   // Default fallbacks if no specific keywords matched
   if (matchedTopics.length === 0) {
-    if (combinedText.includes('code') || combinedText.includes('dev') || combinedText.includes('web')) {
+    if (combinedText.includes('code') || combinedText.includes('dev') || combinedText.includes('software')) {
       matchedTopics.push('Web Development');
     } else {
       matchedTopics.push('AI');
@@ -63,55 +63,28 @@ export function classifyTopics(title: string, description: string = '', content:
 }
 
 /**
- * Normalizes Dev.to public API response to NewsArticle format
+ * Normalizes raw GNews API article objects to IntellectStream NewsArticle type
  */
-function normalizeDevToArticle(art: any, index: number): NewsArticle {
-  const title = art.title || 'Untitled Tech Article';
-  const description = art.description || 'No detailed description available.';
-  const source = art.user?.name ? `${art.user.name} (Dev.to)` : 'Dev.to Tech Stream';
-  const url = art.url || '#';
+function normalizeGNewsArticle(rawArticle: any, index: number): NewsArticle {
+  const title = rawArticle.title || 'Untitled Technology Update';
+  const description = rawArticle.description || rawArticle.content || 'No detailed summary available for this technology news item.';
+  const source = rawArticle.source?.name || 'GNews Stream';
+  const url = rawArticle.url || '#';
 
-  const publishedAtRaw = art.published_at ? new Date(art.published_at) : new Date();
+  const publishedAtRaw = rawArticle.publishedAt ? new Date(rawArticle.publishedAt) : new Date();
   const hoursAgo = Math.max(1, Math.floor((Date.now() - publishedAtRaw.getTime()) / (1000 * 60 * 60)));
   const timeFormatted = hoursAgo < 24 ? `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago` : publishedAtRaw.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  const readingTime = art.reading_time_minutes ? `${art.reading_time_minutes} min read` : '4 min read';
-  const rawTags = Array.isArray(art.tag_list) ? art.tag_list : [];
-  const topics = classifyTopics(title, description, '', rawTags);
-
-  return {
-    id: `devto-${art.id || index}-${Date.now()}`,
-    title,
-    summary: description,
-    source,
-    url,
-    publishedAt: timeFormatted,
-    topics,
-    readTime: readingTime
-  };
-}
-
-/**
- * Normalizes raw NewsAPI article objects to IntellectStream NewsArticle type
- */
-function normalizeNewsApiArticle(rawArticle: any, index: number): NewsArticle {
-  const title = rawArticle.title || 'Untitled Technology Update';
-  const description = rawArticle.description || rawArticle.content || 'No detailed summary available.';
-  const source = rawArticle.source?.name || 'Tech News Stream';
-  const url = rawArticle.url || '#';
-  const publishedAtRaw = rawArticle.publishedAt ? new Date(rawArticle.publishedAt) : new Date();
-
+  // Estimate read time
   const wordCount = `${title} ${description}`.split(/\s+/).length;
   const readTimeMinutes = Math.max(3, Math.ceil(wordCount / 30));
   const readTime = `${readTimeMinutes} min read`;
 
-  const hoursAgo = Math.max(1, Math.floor((Date.now() - publishedAtRaw.getTime()) / (1000 * 60 * 60)));
-  const timeFormatted = hoursAgo < 24 ? `${hoursAgo} hour${hoursAgo === 1 ? '' : 's'} ago` : publishedAtRaw.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-  const topics = classifyTopics(title, description, rawArticle.content || []);
+  // Classify topics deterministically
+  const topics = classifyTopics(title, description, rawArticle.content || '');
 
   return {
-    id: `newsapi-${index}-${Date.now()}`,
+    id: `gnews-${index}-${Date.now()}`,
     title,
     summary: description,
     source,
@@ -130,84 +103,69 @@ export interface NewsServiceResponse {
 }
 
 /**
- * Fetches live tech articles from public Dev.to API
- */
-async function fetchPublicLiveNews(): Promise<NewsServiceResponse | null> {
-  try {
-    const res = await fetch('https://dev.to/api/articles?tag=ai&per_page=12', {
-      next: { revalidate: 300 }
-    });
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return null;
-
-    const normalized = data
-      .filter((art: any) => art.title && art.url)
-      .map((art: any, idx: number) => normalizeDevToArticle(art, idx));
-
-    if (normalized.length === 0) return null;
-
-    return {
-      articles: normalized,
-      isLiveApi: true,
-      source: 'Dev.to Live Technology Feed'
-    };
-  } catch (err) {
-    console.error('[IntellectStream NewsService] Public Dev.to API fetch failed:', err);
-    return null;
-  }
-}
-
-/**
- * Main server-side news fetching service
+ * Server-side news fetching service interfacing with GNews API
  */
 export async function getNewsStream(): Promise<NewsServiceResponse> {
-  const apiKey = process.env.NEWS_API_KEY;
+  const apiKey = process.env.GNEWS_API_KEY;
 
-  // Try NewsAPI if a key is provided
-  if (apiKey && apiKey !== 'your_news_api_key_here') {
-    try {
-      const query = encodeURIComponent('technology OR "artificial intelligence" OR "web development" OR robotics OR cybersecurity');
-      const apiUrl = `https://newsapi.org/v2/everything?q=${query}&language=en&sortBy=publishedAt&pageSize=18&apiKey=${apiKey}`;
+  // Fallback if GNews API key is missing or placeholder
+  if (!apiKey || apiKey === 'your_gnews_api_key_here') {
+    console.warn('[IntellectStream NewsService] GNEWS_API_KEY is not configured in .env.local. Using local mock dataset.');
+    return {
+      articles: FEATURED_ARTICLES_PREVIEW,
+      isLiveApi: false,
+      source: 'Mock Fallback Dataset (Configure GNEWS_API_KEY in .env.local for live feed)'
+    };
+  }
 
-      const res = await fetch(apiUrl, {
-        next: { revalidate: 900 }
-      });
+  try {
+    const query = encodeURIComponent('technology OR "artificial intelligence"');
+    const apiUrl = `https://gnews.io/api/v4/search?q=${query}&lang=en&max=10&apikey=${apiKey}`;
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
-          const normalizedArticles: NewsArticle[] = data.articles
-            .filter((art: any) => art.title && art.title !== '[Removed]')
-            .map((art: any, idx: number) => normalizeNewsApiArticle(art, idx));
+    const res = await fetch(apiUrl, {
+      next: { revalidate: 900 } // Cache for 15 minutes in Next.js
+    });
 
-          if (normalizedArticles.length > 0) {
-            return {
-              articles: normalizedArticles,
-              isLiveApi: true,
-              source: 'Live NewsAPI Feed'
-            };
-          }
-        }
-      } else {
-        console.warn(`[IntellectStream NewsService] NewsAPI key returned HTTP ${res.status}. Trying public tech API fallback.`);
-      }
-    } catch (err: any) {
-      console.warn('[IntellectStream NewsService] NewsAPI error, falling back to public live API:', err.message || err);
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => '');
+      console.error(`[IntellectStream NewsService] GNews API error HTTP ${res.status}: ${errorText}`);
+
+      return {
+        articles: FEATURED_ARTICLES_PREVIEW,
+        isLiveApi: false,
+        source: `Mock Fallback Dataset (GNews API error HTTP ${res.status})`,
+        error: `GNews API returned HTTP ${res.status}. Displaying fallback technology stream.`
+      };
     }
-  }
 
-  // Fallback to Public Live Dev.to API
-  const publicFeed = await fetchPublicLiveNews();
-  if (publicFeed) {
-    return publicFeed;
-  }
+    const data = await res.json();
 
-  // Fallback to Local Mock Dataset
-  return {
-    articles: FEATURED_ARTICLES_PREVIEW,
-    isLiveApi: false,
-    source: 'Local Mock Dataset (Offline Fallback)'
-  };
+    if (!data.articles || !Array.isArray(data.articles) || data.articles.length === 0) {
+      return {
+        articles: FEATURED_ARTICLES_PREVIEW,
+        isLiveApi: false,
+        source: 'Mock Fallback Dataset (No GNews articles returned)'
+      };
+    }
+
+    // Normalize GNews payload
+    const normalizedArticles: NewsArticle[] = data.articles
+      .filter((art: any) => art.title && art.url)
+      .map((art: any, idx: number) => normalizeGNewsArticle(art, idx));
+
+    return {
+      articles: normalizedArticles.length > 0 ? normalizedArticles : FEATURED_ARTICLES_PREVIEW,
+      isLiveApi: true,
+      source: 'Live GNews Feed'
+    };
+
+  } catch (err: any) {
+    console.error('[IntellectStream NewsService] GNews API exception:', err.message || err);
+    return {
+      articles: FEATURED_ARTICLES_PREVIEW,
+      isLiveApi: false,
+      source: 'Mock Fallback Dataset (Network error)',
+      error: 'Unable to connect to GNews provider. Displaying fallback stream.'
+    };
+  }
 }
