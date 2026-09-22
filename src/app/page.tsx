@@ -1,22 +1,15 @@
 import React from 'react';
 import { 
   Sparkles, 
-  BookOpen, 
-  Calendar, 
-  CheckCircle2, 
   Flame, 
   ArrowRight, 
-  Layers, 
   Zap, 
   Filter, 
-  Cpu, 
   Brain, 
-  Globe, 
-  Rocket,
-  Clock,
-  ExternalLink
+  CheckCircle2
 } from 'lucide-react';
-import { POPULAR_TOPICS, WORKFLOW_STAGES, FEATURED_ARTICLES_PREVIEW } from '@/lib/constants';
+import { WORKFLOW_STAGES } from '@/lib/constants';
+import { NewsFeed } from '@/components/NewsFeed';
 
 export default function Home() {
   return (
@@ -37,14 +30,13 @@ export default function Home() {
             </div>
             <div>
               <span className="font-bold text-lg tracking-tight text-white">Intellect<span className="text-cyan-400">Stream</span></span>
-              <span className="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">v0.1 Prototype</span>
+              <span className="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">Milestone 2</span>
             </div>
           </div>
 
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+            <a href="#feed" className="hover:text-cyan-400 transition-colors">News Feed</a>
             <a href="#workflow" className="hover:text-cyan-400 transition-colors">Workflow</a>
-            <a href="#topics" className="hover:text-cyan-400 transition-colors">Topic Filtering</a>
-            <a href="#feed" className="hover:text-cyan-400 transition-colors">Personalized Feed</a>
             <a href="#learning-path" className="hover:text-cyan-400 transition-colors">Adaptive Learning</a>
           </nav>
 
@@ -53,10 +45,13 @@ export default function Home() {
               <Flame className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
               <span>0 Day Streak</span>
             </button>
-            <button className="flex items-center space-x-2 text-xs font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-black hover:opacity-90 transition-opacity shadow-md shadow-cyan-500/20">
-              <span>Start Learning</span>
+            <a 
+              href="#feed"
+              className="flex items-center space-x-2 text-xs font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-black hover:opacity-90 transition-opacity shadow-md shadow-cyan-500/20"
+            >
+              <span>Explore Stream</span>
               <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
-            </button>
+            </a>
           </div>
         </div>
       </header>
@@ -101,8 +96,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* FUNCTIONAL NEWS FEED COMPONENT */}
+        <NewsFeed />
+
         {/* WORKFLOW STAGES */}
-        <section id="workflow" className="space-y-8">
+        <section id="workflow" className="space-y-8 pt-8 border-t border-slate-800/80">
           <div className="text-center space-y-3">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
               The Product Philosophy
@@ -128,89 +126,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* TOPIC COMBINATION FILTERING PREVIEW */}
-        <section id="topics" className="glass-panel p-8 sm:p-10 rounded-3xl space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center space-x-2 text-cyan-400 text-xs font-mono uppercase tracking-wider">
-                <Filter className="w-3.5 h-3.5" />
-                <span>Feature 1 — Topic Combination Filtering</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white">
-                Multi-Domain Relevance
-              </h2>
-              <p className="text-slate-400 text-sm">
-                Filter articles according to complex combinations of your interests instead of isolated keywords.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap gap-2 max-w-lg">
-              {POPULAR_TOPICS.map((topic, i) => (
-                <span key={i} className="cursor-pointer text-xs font-medium px-3.5 py-2 rounded-xl bg-slate-900/90 border border-slate-700/70 text-slate-200 hover:border-cyan-400 hover:text-cyan-300 transition-all">
-                  {topic}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FEED & ONE-CLICK "LEARN THIS" DEMO */}
-        <section id="feed" className="space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-800/80 pb-4">
-            <div>
-              <div className="inline-flex items-center space-x-2 text-blue-400 text-xs font-mono uppercase tracking-wider">
-                <Layers className="w-3.5 h-3.5" />
-                <span>Feature 2 & 3 — Personalized News & One-Click Learning</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-                Personalized Tech Feed
-              </h2>
-            </div>
-            <div className="text-xs text-slate-400 flex items-center space-x-2">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Real-Time Updates</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {FEATURED_ARTICLES_PREVIEW.map((article) => (
-              <div key={article.id} className="glass-card p-6 rounded-2xl flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
-                    <span>{article.source}</span>
-                    <span>{article.publishedAt}</span>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-white leading-snug group-hover:text-cyan-300 transition-colors">
-                    {article.title}
-                  </h3>
-
-                  <p className="text-slate-400 text-xs line-clamp-3 leading-relaxed">
-                    {article.summary}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {article.topics.map((t, idx) => (
-                      <span key={idx} className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/50">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">{article.readTime}</span>
-                  <button className="flex items-center space-x-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition-all">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Learn This</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SKILL LEVEL ADAPTATION DEMO SECTION */}
+        {/* SKILL LEVEL ADAPTATION PREVIEW SECTION */}
         <section id="learning-path" className="glass-panel p-8 sm:p-10 rounded-3xl space-y-8">
           <div className="space-y-3">
             <div className="inline-flex items-center space-x-2 text-purple-400 text-xs font-mono uppercase tracking-wider">
@@ -301,7 +217,7 @@ export default function Home() {
             <span className="font-bold text-slate-300">IntellectStream</span>
             <span>— Stay current with AI. Learn it. Build it.</span>
           </div>
-          <p>© 2026 IntellectStream. Milestone 1 Next.js Foundation.</p>
+          <p>© 2026 IntellectStream. Milestone 2 Functional News Feed.</p>
         </div>
       </footer>
     </div>
